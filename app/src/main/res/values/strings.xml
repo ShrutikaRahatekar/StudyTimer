@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">StudyTimer</string>
+    <string name="stop">Stop Timer</string>
+    <string name="start">Start Timer</string>
+    <string name="working">Started</string>
+    <string name="stopped">Stopped</string>
+</resources>

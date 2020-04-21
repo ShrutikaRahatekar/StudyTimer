@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="163dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="163dp"
+        android:text="@string/start"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@id/c_meter"
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toEndOf="@+id/c_meter"
+        app:layout_constraintStart_toStartOf="@id/c_meter"
+        app:layout_constraintTop_toBottomOf="@+id/c_meter" />
+
+    <Chronometer
+        android:id="@+id/c_meter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="256dp"
+        android:layout_marginEnd="68dp"
+        android:layout_marginBottom="28dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#092FEC"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="150dp">
+
+
+        <ImageView
+            android:id="@+id/start"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+
+            app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
+
+        <ImageView
+            android:id="@+id/pause"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_pause_black_24dp" />
+
+        <ImageView
+            android:id="@+id/save"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_fiber_manual_record_black_24dp" />
+    </LinearLayout>
+
+</LinearLayout>
