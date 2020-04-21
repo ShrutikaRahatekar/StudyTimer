@@ -2,18 +2,21 @@ package com.example.studytimer
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.view.View
+import android.os.PersistableBundle
+import android.os.SystemClock
 import android.widget.Chronometer
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
     var meter:Chronometer? = null
     var preference: SharedPreferences? = null
     var isWorking = false
+    public var pauseOffset: Long=0
+    var st:String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,7 @@ class MainActivity : AppCompatActivity() {
 //        })
         start.setOnClickListener {
             if (!isWorking) {
+                meter?.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                 meter?.start()
                 isWorking = true
             }
@@ -60,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         pause.setOnClickListener {
             if (isWorking) {
                 meter?.stop()
+                pauseOffset = SystemClock.elapsedRealtime() - meter?.getBase()!!
                 isWorking = false
             }
             Toast.makeText(this,"pause",Toast.LENGTH_LONG).show()
@@ -68,6 +73,8 @@ class MainActivity : AppCompatActivity() {
         save.setOnClickListener {
             saveData()
             textView.text = "you spend ${getData()} time for studing lasttime"
+            meter?.setBase(SystemClock.elapsedRealtime());
+            pauseOffset = 0;
             Toast.makeText(this,"save",Toast.LENGTH_LONG).show()
         }
 
@@ -80,5 +87,18 @@ class MainActivity : AppCompatActivity() {
 
     fun getData(): String{
         return preference?.getString("last_read", "00:00") ?: "00:00"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+
+        st = meter?.text.toString()
+
+        outState.putString("last_time",st)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        meter?.setText(savedInstanceState.getString("last_time"))
     }
 }
