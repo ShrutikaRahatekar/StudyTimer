@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.SystemClock
+import android.util.Log
 import android.widget.Chronometer
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,39 +24,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
        preference = getPreferences(Context.MODE_PRIVATE)
-        meter = findViewById<Chronometer>(R.id.c_meter)
+        meter = findViewById(R.id.c_meter)
 
-        //access the button using id
-//        val btn = findViewById<Button>(R.id.btn)
-//        btn?.setOnClickListener(object : View.OnClickListener {
-//
-//            var isWorking = false
-//
-//            override fun onClick(v: View) {
-//                if (!isWorking) {
-//                    meter.start()
-//                    isWorking = true
-//                } else {
-//                    meter.stop()
-//                    isWorking = false
-//                }
-//
-//                btn.setText(if (isWorking) R.string.start else R.string.stop)
-//
-//                Toast.makeText(
-//                    this@MainActivity, getString(
-//                        if (isWorking)
-//                            R.string.working
-//                        else
-//                            R.string.stopped
-//                    ),
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//        })
         start.setOnClickListener {
             if (!isWorking) {
-                meter?.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+                meter?.base = SystemClock.elapsedRealtime() - pauseOffset
                 meter?.start()
                 isWorking = true
             }
@@ -64,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         pause.setOnClickListener {
             if (isWorking) {
                 meter?.stop()
-                pauseOffset = SystemClock.elapsedRealtime() - meter?.getBase()!!
+                pauseOffset = SystemClock.elapsedRealtime() - (meter?.base ?: 0)
                 isWorking = false
             }
             Toast.makeText(this,"pause",Toast.LENGTH_LONG).show()
@@ -73,32 +46,39 @@ class MainActivity : AppCompatActivity() {
         save.setOnClickListener {
             saveData()
             textView.text = "you spend ${getData()} time for studing lasttime"
-            meter?.setBase(SystemClock.elapsedRealtime());
+            meter?.base = SystemClock.elapsedRealtime();
             pauseOffset = 0;
             Toast.makeText(this,"save",Toast.LENGTH_LONG).show()
         }
 
     }
-    fun saveData(){
+    private fun saveData(){
         val editor=preference?.edit() ?: return
         editor.putString("last_read",meter?.text.toString())
         editor.apply()
     }
 
-    fun getData(): String{
+    private fun getData(): String{
         return preference?.getString("last_read", "00:00") ?: "00:00"
     }
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.run {
+            pauseOffset = SystemClock.elapsedRealtime() - (meter?.base ?: 0)
 
-        st = meter?.text.toString()
-
-        outState.putString("last_time",st)
+            putLong("last_time", pauseOffset)
+            putBoolean("isWorking", isWorking)
+        }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        pauseOffset = savedInstanceState.getLong("last_time")
+        meter?.base = SystemClock.elapsedRealtime() - pauseOffset
+        isWorking = savedInstanceState.getBoolean("isWorking")
+        if(isWorking){
+            meter?.start()
+        }
         super.onRestoreInstanceState(savedInstanceState)
-        meter?.setText(savedInstanceState.getString("last_time"))
     }
 }
